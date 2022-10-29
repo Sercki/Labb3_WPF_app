@@ -39,79 +39,21 @@ namespace Labb3_WPF_app
 
             List<string> workingday = new List<string>();
             List<string> weekend = new List<string>();
-            var picker = sender as DatePicker;
+            DateTime startDate = new DateTime(2022, 01, 01, 18, 00, 00);
+            DateTime endWorkingday = new DateTime(2022, 01, 01, 22, 00, 00);
+            DateTime endWeekend = new DateTime(2022, 01, 02, 00, 00, 00);            
             if (PickADay.SelectedDate != null)
             {
+                var picker = sender as DatePicker;
                 var date = picker.SelectedDate.Value.DayOfWeek.ToString();
+
                 if (date == "Saturday" || date == "Sunday")
                 {
-                    DateTime startDate = new DateTime(2022, 01, 01, 18, 00, 00);
-                    DateTime endDate = new DateTime(2022, 01, 02, 00, 00, 00);
-                    for (DateTime dtm = startDate; dtm <= endDate; dtm = dtm.AddMinutes(30))
-                    {
-                        if (picker.SelectedDate == DateTime.Today)
-                        {
-                            if (dtm.Hour == DateTime.Now.Hour)
-                            {
-                                if (dtm.Minute > DateTime.Now.Minute)
-                                {
-                                    weekend.Add(dtm.ToString("HH:mm"));
-                                }
-                                else
-                                {
-                                    continue;
-                                }
-                            }
-                            else if (dtm.Hour > DateTime.Now.Hour)
-                            {
-                                weekend.Add(dtm.ToString("HH:mm"));
-                            }
-                            else
-                            {
-                                continue;
-                            }
-                        }
-                        else
-                        {
-                            weekend.Add(dtm.ToString("HH:mm"));
-                        }
-                    }
-                    TimeComboBox.ItemsSource = weekend;
+                    HelpMethods.availableHours(startDate, endWeekend, picker, weekend, TimeComboBox);                 
                 }
                 else
                 {
-                    DateTime startDate = new DateTime(2022, 01, 01, 18, 00, 00);
-                    DateTime endDate = new DateTime(2022, 01, 01, 22, 00, 00);
-                    for (DateTime dtm = startDate; dtm <= endDate; dtm = dtm.AddMinutes(30))
-                    {
-                        if (picker.SelectedDate == DateTime.Today)
-                        {
-                            if (dtm.Hour == DateTime.Now.Hour)
-                            {
-                                if (dtm.Minute > DateTime.Now.Minute)
-                                {
-                                    workingday.Add(dtm.ToString("HH:mm"));
-                                }
-                                else
-                                {
-                                    continue;
-                                }
-                            }
-                            else if (dtm.Hour > DateTime.Now.Hour)
-                            {
-                                workingday.Add(dtm.ToString("HH:mm"));
-                            }
-                            else
-                            {
-                                continue;
-                            }
-                        }
-                        else
-                        {
-                            workingday.Add(dtm.ToString("HH:mm"));
-                        }
-                    }
-                    TimeComboBox.ItemsSource = workingday;
+                    HelpMethods.availableHours(startDate, endWorkingday, picker, workingday, TimeComboBox);               
                 }
             }
             else
@@ -122,9 +64,8 @@ namespace Labb3_WPF_app
 
         private void Boka_Click(object sender, RoutedEventArgs e)
         {
-            int checkmethod = 1;
-            //var customer = new BookingInfo(PickADay.Text, TimeComboBox.Text, TableComboBox.Text, NameTextBox.Text);
-            HelpMethods.InstertToList(1,history, new BookingInfo(PickADay.Text, TimeComboBox.Text, TableComboBox.Text, NameTextBox.Text));            
+            int checkmethod = 1;            
+            HelpMethods.InstertToList(checkmethod,history, new BookingInfo(PickADay.Text, TimeComboBox.Text, TableComboBox.Text, NameTextBox.Text));            
             DisplayContent();
             Clear();
 
@@ -188,13 +129,13 @@ namespace Labb3_WPF_app
             while (history.Count < 20)
             {
                 Random rnd = new Random();
-                int randomDay = rnd.Next(0, 31);
+                int randomDay = rnd.Next(0,30);
                 DateTime randomDate = DateTime.Now.AddDays(randomDay);
                 int nameIndex = rnd.Next(exampleNames.Length);
                 int hourIndex = rnd.Next(hour.Length);
                 int table = rnd.Next(1, 6);
-                //var customer = new BookingInfo(randomDate.ToShortDateString(), hour[hourIndex], table.ToString(), exampleNames[nameIndex]);
-                HelpMethods.InstertToList(2,history, new BookingInfo(randomDate.ToShortDateString(), hour[hourIndex], table.ToString(), exampleNames[nameIndex]));                
+               
+                HelpMethods.InstertToList(checkmethod,history, new BookingInfo(randomDate.ToShortDateString(), hour[hourIndex], table.ToString(), exampleNames[nameIndex]));                
                 DisplayContent();
             }
         }
