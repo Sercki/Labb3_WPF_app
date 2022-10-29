@@ -34,34 +34,32 @@
                                                 <Binding Path = "Date"/>
                                                 <Binding Path = "Time"/>
                                                 <Binding Path = "TableNumber"/>
-                                                <Binding Path = "Name" />
+                                                <Binding Path = "Name"/>
                                             </MultiBinding>
                                         </TextBlock.Text>
-
                                     </TextBlock>
                                 </StackPanel>
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <ComboBox x:Name="Tid" HorizontalAlignment="Left" Margin="108,99,0,0" VerticalAlignment="Top" Width="166" Grid.Column="1" Height="29"/>
-                    <ComboBox x:Name="Bordsnummer" HorizontalAlignment="Left" Margin="396,99,0,0" VerticalAlignment="Top" Width="174" Grid.Column="1" Height="29">
+                    <ComboBox x:Name="TimeComboBox" HorizontalAlignment="Left" Margin="108,99,0,0" VerticalAlignment="Top" Width="166" Grid.Column="1" Height="29" SelectionChanged="TimeComboBox_SelectionChanged"/>
+                    <ComboBox x:Name="TableComboBox" HorizontalAlignment="Left" Margin="396,99,0,0" VerticalAlignment="Top" Width="174" Grid.Column="1" Height="29" SelectionChanged="TableComboBox_SelectionChanged">
                         <ComboBoxItem>1</ComboBoxItem>
                         <ComboBoxItem>2</ComboBoxItem>
                         <ComboBoxItem>3</ComboBoxItem>
                         <ComboBoxItem>4</ComboBoxItem>
                         <ComboBoxItem>5</ComboBoxItem>
                     </ComboBox>
-                    <DatePicker x:Name="Datum" HorizontalAlignment="Left" Margin="108,40,0,0" VerticalAlignment="Top" Grid.Column="1" Width="166" Height="27" SelectedDateChanged="DatePicker_SelectedDateChanged"/>
-                    <TextBox x:Name="Namn" HorizontalAlignment="Left" Margin="396,42,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="174" Grid.Column="1" Height="23"/>
-                    <Button Content="Visa bokningar" HorizontalAlignment="Left" Margin="67,44,0,0" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" Width="230" Height="47"/>
-                    <Button Content="Boka" HorizontalAlignment="Left" Margin="258,149,0,0" VerticalAlignment="Top" Grid.Column="1" Height="36" Width="166" Click="Boka_Click"/>
+                    <DatePicker x:Name="PickADay" HorizontalAlignment="Left" Margin="108,40,0,0" VerticalAlignment="Top" Grid.Column="1" Width="166" Height="27" SelectedDateChanged="PickADay_SelectedDateChanged"/>
+                    <TextBox x:Name="NameTextBox" HorizontalAlignment="Left" Margin="396,42,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="174" Grid.Column="1" Height="23" TextChanged="NameTextBox_TextChanged"/>
+                    <Button Content="Visa bokningar" HorizontalAlignment="Left" Margin="67,44,0,0" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" Width="230" Height="47" IsEnabled="False"/>
+                    <Button Name ="Book" Content="Boka" HorizontalAlignment="Left" Margin="258,149,0,0" VerticalAlignment="Top" Grid.Column="1" Height="36" Width="166" Click="Boka_Click"/>
                     <Button Content="Avboka" HorizontalAlignment="Left" Margin="67,124,0,0" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" Width="230" Height="44" Click="Avboka_Click"/>
                     <Label Grid.Column="1" Content="Tid" HorizontalAlignment="Left" Margin="108,76,0,0" VerticalAlignment="Top" Width="46"/>
                     <Label Grid.Column="1" Content="Namn" HorizontalAlignment="Left" Margin="396,16,0,0" VerticalAlignment="Top" Height="26" Width="57"/>
                     <Label Grid.Column="1" Content="Bordsnummer" HorizontalAlignment="Left" Margin="398,76,0,0" VerticalAlignment="Top"/>
                     <Label Grid.Column="1" Content="Datum" HorizontalAlignment="Left" Margin="108,16,0,0" VerticalAlignment="Top" Width="83"/>
                 </Grid>
-
             </TabItem>
             <TabItem Header="Backup">
                 <Grid Background="#FFE5E5E5">
@@ -75,6 +73,5 @@
                 </Grid>
             </TabItem>
         </TabControl>
-
     </Grid>
 </Window>
