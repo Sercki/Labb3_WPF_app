@@ -28,7 +28,7 @@ namespace Labb3_WPF_app
         public MainWindow()
         {
             InitializeComponent();
-            StartExamplesRandom();
+            //StartExamplesRandom();
             BokaEnabled();
             DisplayContent();
             PickADay.BlackoutDates.AddDatesInPast();
@@ -64,8 +64,8 @@ namespace Labb3_WPF_app
 
         private void Boka_Click(object sender, RoutedEventArgs e)
         {
-            int checkmethod = 1;            
-            HelpMethods.InstertToList(checkmethod,history, new BookingInfo(PickADay.Text, TimeComboBox.Text, TableComboBox.Text, NameTextBox.Text));            
+            bool needMessageBox = true;     
+            HelpMethods.InstertToList(needMessageBox,history, new BookingInfo(PickADay.Text, TimeComboBox.Text, TableComboBox.Text, NameTextBox.Text), AmountOfPeopleCombobox);            
             DisplayContent();
             Clear();
 
@@ -93,11 +93,12 @@ namespace Labb3_WPF_app
             PickADay.SelectedDate = null;
             TimeComboBox.ItemsSource = null;
             TableComboBox.SelectedValue = null;
+            AmountOfPeopleCombobox.SelectedValue = null;
             NameTextBox.Text = "";
         }
-        private void BokaEnabled()
+        private void BokaEnabled() 
         {
-            if (PickADay.SelectedDate == null || TimeComboBox.SelectedItem == null || TableComboBox.SelectedItem == null || NameTextBox.Text.Length == 0)
+            if (PickADay.SelectedDate == null || TimeComboBox.SelectedItem == null || TableComboBox.SelectedItem == null || NameTextBox.Text.Length == 0 || AmountOfPeopleCombobox.SelectedItem == null)
             {
                 Book.IsEnabled = false;
             }
@@ -120,25 +121,28 @@ namespace Labb3_WPF_app
         private void TimeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             BokaEnabled();
-        }   
-        private void StartExamplesRandom()  //metod för att lägga till ett antal bokningar redo att visas
-        {
-            int checkmethod = 2;
-            string[] exampleNames = { "Anna", "Sofia", "Anders", "Magnus", "Ted" };
-            string[] hour = { "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30", "22:00" };
-            while (history.Count < 20)
-            {
-                Random rnd = new Random();
-                int randomDay = rnd.Next(0,30);
-                DateTime randomDate = DateTime.Now.AddDays(randomDay);
-                int nameIndex = rnd.Next(exampleNames.Length);
-                int hourIndex = rnd.Next(hour.Length);
-                int table = rnd.Next(1, 6);
-               
-                HelpMethods.InstertToList(checkmethod,history, new BookingInfo(randomDate.ToShortDateString(), hour[hourIndex], table.ToString(), exampleNames[nameIndex]));                
-                DisplayContent();
-            }
         }
-
+        private void AmountOfPeopleCombobox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            BokaEnabled();
+        }
+        //private void StartExamplesRandom()  //metod för att lägga till ett antal bokningar redo att visas
+        //{
+        //    bool needMessageBox = false;
+        //    string[] exampleNames = { "Anna", "Sofia", "Anders", "Magnus", "Ted" };
+        //    string[] hour = { "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30", "22:00" };
+        //    while (history.Count < 20)
+        //    {
+        //        Random rnd = new Random();
+        //        int randomDay = rnd.Next(0,30);
+        //        DateTime randomDate = DateTime.Now.AddDays(randomDay);
+        //        int nameIndex = rnd.Next(exampleNames.Length);
+        //        int hourIndex = rnd.Next(hour.Length);
+        //        int table = rnd.Next(1, 6);
+               
+        //        HelpMethods.InstertToList(needMessageBox, history, new BookingInfo(randomDate.ToShortDateString(), hour[hourIndex], table.ToString(), exampleNames[nameIndex]));                
+        //        DisplayContent();
+        //    }
+        //}        
     }
 }
