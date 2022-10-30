@@ -15,44 +15,13 @@ namespace Labb3_WPF_app
         public string Name { get; set; }
         public int GuestsAmount { get; set; }
 
-        public BookingInfo(string date, string time, string tableNumber, string name)
+        public BookingInfo(string date, string time, string tableNumber, string name, ComboBox GuestsNumber)
         {
             this.Date = date;
             this.Time = time;
             this.TableNumber = tableNumber;
             this.Name = name;
-            GuestsAmount = 5;
-
-        }
-        public bool AvailableSeats(ComboBox AmountOfGuests)
-        {
-            bool check = false;
-            if (AmountOfGuests.SelectedValue != null)
-            {
-                int difference = int.Parse(AmountOfGuests.Text.ToString());
-                GuestsAmount = GuestsAmount - difference;
-                if (GuestsAmount > 0)
-                {
-                     check = true;
-                }
-                else
-                {
-                    check = false;
-                }                
-            }
-            return check;
+            this.GuestsAmount = int.Parse(GuestsNumber.Text.ToString());
         }
     }
-    //internal class Guest
-    //{
-    //    public string Name { get; set; }
-    //    public int GuestsAmount { get; set; }
-
-    //    public Guest(string name, int guestsAmount)
-    //    {
-    //        this.Name = name;
-    //        this.GuestsAmount = guestsAmount;
-    //    }
-
-    //}
 }

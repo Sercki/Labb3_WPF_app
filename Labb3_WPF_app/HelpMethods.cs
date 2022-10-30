@@ -10,9 +10,11 @@ namespace Labb3_WPF_app
 {
     internal static class HelpMethods
     {
-        public static void InstertToList(bool isMessageBoxNeeded, List<BookingInfo> inData, BookingInfo inCustomer, ComboBox AmountOfGuests)
-        {
+        public static void InstertToList(bool isMessageBoxNeeded, List<BookingInfo> inData, BookingInfo inCustomer)
+        {            
             bool checkIfAvailable = true;
+            int seats = 0;
+            List<BookingInfo> sameDateTimeTableReservations = new List<BookingInfo>();
             if (inData.Count > 0)
             {
                 foreach (var customerBookingInfo in inData)
@@ -22,41 +24,32 @@ namespace Labb3_WPF_app
                         if (customerBookingInfo.Time == inCustomer.Time)
                         {
                             if (customerBookingInfo.TableNumber == inCustomer.TableNumber)
-                            {//tutaj dodano
-                                if (customerBookingInfo.GuestsAmount > 0)
-                                {
-                                    bool check = customerBookingInfo.AvailableSeats(AmountOfGuests);
-                                    if (check == false)
-                                    {
-                                        if (isMessageBoxNeeded == true)
-                                        {
-                                            MessageBox.Show($"Tyvärr bordet nummer {inCustomer.TableNumber} är redan bokad. Försök boka ett annat bord eller välja annan datum!!", "Fullbokad bord", MessageBoxButton.OK, MessageBoxImage.Error);
-                                        }
-                                        checkIfAvailable = false;
-                                        break;  //utan break programmet sparar ett nytt objekt av bookinInfo om det finns mer bord som är bokad på samma tid, t.ex. programmet felaktigt sparar bord nr 1 om det finns redan bokning till kl 18 för bord nr 1 och 2. "break;" skyddar mot liknande händelser.
-                                    }
-                                    else
-                                    {
-                                        checkIfAvailable = true;
-                                    }
-                                }
-                                else
-                                {
-                                    MessageBox.Show($"Bord är fullbokad");
-                                }
+                            {//tutaj dodano           
+                                sameDateTimeTableReservations.Add(customerBookingInfo);
                             }
                         }
-                        //tu koniec
-                        //jeśli lista inddata zawiera rezerwacje o tej samej dacie, godzinie i numerze stolika co nowa rezerwacja
-                        //to trzeba porownac czy lista ilosci gosci w rezerwacji indata  ma miejsce na dopisanie ilosci gosci z nowej rezerwacji
-
-
                     }
+                }                
+                foreach (var item in sameDateTimeTableReservations)
+                {
+                    seats += item.GuestsAmount;
+                }       
+                if (seats >= 5 || seats + inCustomer.GuestsAmount > 5)
+                {
+                    if (isMessageBoxNeeded == true)
+                    {
+                        MessageBox.Show($"Tyvärr bordet nummer {inCustomer.TableNumber} är redan fullbokad. Försök boka ett annat bord eller välja annan datum alternativt dela kundens reservation på flera olika bord!", "Fullbokad bord", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                    checkIfAvailable = false;                    
+                }
+                else
+                {
+                    checkIfAvailable = true;
                 }
             }
             if (checkIfAvailable == true)
             {
-                inData.Add(inCustomer);
+                inData.Add(inCustomer);                
                 if (isMessageBoxNeeded == true)
                 {
                     MessageBox.Show($"Bokning är klart. Kundnamn är: {inCustomer.Name}", "Bekräftelse", MessageBoxButton.OK, MessageBoxImage.Information);

@@ -65,7 +65,7 @@ namespace Labb3_WPF_app
         private void Boka_Click(object sender, RoutedEventArgs e)
         {
             bool needMessageBox = true;     
-            HelpMethods.InstertToList(needMessageBox,history, new BookingInfo(PickADay.Text, TimeComboBox.Text, TableComboBox.Text, NameTextBox.Text), AmountOfPeopleCombobox);            
+            HelpMethods.InstertToList(needMessageBox,history, new BookingInfo(PickADay.Text, TimeComboBox.Text, TableComboBox.Text, NameTextBox.Text, AmountOfPeopleCombobox));            
             DisplayContent();
             Clear();
 
@@ -83,7 +83,7 @@ namespace Labb3_WPF_app
                 return;
             }
             else
-            {
+            {                
                 history.Remove((BookingInfo)ConfirmedList.SelectedItem);
                 DisplayContent();
             }
