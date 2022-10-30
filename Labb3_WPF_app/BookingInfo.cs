@@ -15,13 +15,13 @@ namespace Labb3_WPF_app
         public string Name { get; set; }
         public int GuestsAmount { get; set; }
 
-        public BookingInfo(string date, string time, string tableNumber, string name, ComboBox GuestsNumber)
+        public BookingInfo(string date, string time, string tableNumber, string name, string GuestsNumber)
         {
             this.Date = date;
             this.Time = time;
             this.TableNumber = tableNumber;
             this.Name = name;
-            this.GuestsAmount = int.Parse(GuestsNumber.Text.ToString());
+            this.GuestsAmount = int.Parse(GuestsNumber);
         }
     }
 }

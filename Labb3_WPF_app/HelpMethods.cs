@@ -54,7 +54,7 @@ namespace Labb3_WPF_app
                 {
                     MessageBox.Show($"Bokning är klart. Kundnamn är: {inCustomer.Name}", "Bekräftelse", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-            }
+            }           
         }
         public static void availableHours(DateTime startValue, DateTime endValue, DatePicker chooseDate, List<string> nameOfDay, ComboBox selectHour)
         {

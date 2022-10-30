@@ -30,11 +30,12 @@
                                 <StackPanel>
                                     <TextBlock TextWrapping="Wrap">
                                         <TextBlock.Text>
-                                            <MultiBinding StringFormat = "{}{0}, {1}, bord nr {2}, {3}">
+                                            <MultiBinding StringFormat = "{}{0}, {1}, bord nr {2}, {4} seats, {3}">
                                                 <Binding Path = "Date"/>
                                                 <Binding Path = "Time"/>
                                                 <Binding Path = "TableNumber"/>
                                                 <Binding Path = "Name"/>
+                                                <Binding Path= "GuestsAmount"/>
                                             </MultiBinding>
                                         </TextBlock.Text>
                                     </TextBlock>
@@ -75,9 +76,9 @@
                         <ColumnDefinition Width="10*"/>
                         <ColumnDefinition Width="387*"/>
                     </Grid.ColumnDefinitions>
-                    <Button Content="Save to file" HorizontalAlignment="Left" Margin="94,155,0,0" VerticalAlignment="Top" Height="47" Width="193" Grid.Column="1"/>
-                    <Button Content="Load from file" HorizontalAlignment="Left" Margin="94,242,0,0" VerticalAlignment="Top" Height="47" Width="193" Grid.Column="1"/>
-                    <Label Content="Backup" HorizontalAlignment="Left" Margin="94,98,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+                    <Button Content="Save to file" HorizontalAlignment="Left" Margin="94,155,0,0" VerticalAlignment="Top" Height="47" Width="193" Grid.Column="1" Click="SaveToFile_Click"/>
+                    <Button Content="Load from file" HorizontalAlignment="Left" Margin="94,242,0,0" VerticalAlignment="Top" Height="47" Width="193" Grid.Column="1" Click="LoadFromFile_Click"/>
+                    <Label Content="Backup:" HorizontalAlignment="Left" Margin="94,112,0,0" VerticalAlignment="Top" Grid.Column="1"/>
                 </Grid>
             </TabItem>
         </TabControl>
