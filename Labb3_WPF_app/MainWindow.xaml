@@ -30,11 +30,12 @@
                                 <StackPanel>
                                     <TextBlock TextWrapping="Wrap">
                                         <TextBlock.Text>
-                                            <MultiBinding StringFormat = "{}{0}, {1}, bord nr {2}, {3}">
+                                            <MultiBinding StringFormat = "{}{0}, {1}, bord nr {2}, {4} seats, {3}">
                                                 <Binding Path = "Date"/>
                                                 <Binding Path = "Time"/>
                                                 <Binding Path = "TableNumber"/>
                                                 <Binding Path = "Name"/>
+                                                <Binding Path= "GuestsAmount"/>
                                             </MultiBinding>
                                         </TextBlock.Text>
                                     </TextBlock>
@@ -42,23 +43,31 @@
                             </DataTemplate>
                         </ListBox.ItemTemplate>
                     </ListBox>
-                    <ComboBox x:Name="TimeComboBox" HorizontalAlignment="Left" Margin="108,99,0,0" VerticalAlignment="Top" Width="166" Grid.Column="1" Height="29" SelectionChanged="TimeComboBox_SelectionChanged"/>
-                    <ComboBox x:Name="TableComboBox" HorizontalAlignment="Left" Margin="396,99,0,0" VerticalAlignment="Top" Width="174" Grid.Column="1" Height="29" SelectionChanged="TableComboBox_SelectionChanged">
+                    <ComboBox Name ="AmountOfPeopleCombobox" HorizontalAlignment="Left" Margin="396,99,0,0" VerticalAlignment="Top" Width="174" Grid.Column="1" Height="29" SelectionChanged="AmountOfPeopleCombobox_SelectionChanged">
                         <ComboBoxItem>1</ComboBoxItem>
                         <ComboBoxItem>2</ComboBoxItem>
                         <ComboBoxItem>3</ComboBoxItem>
                         <ComboBoxItem>4</ComboBoxItem>
                         <ComboBoxItem>5</ComboBoxItem>
                     </ComboBox>
-                    <DatePicker x:Name="PickADay" HorizontalAlignment="Left" Margin="108,40,0,0" VerticalAlignment="Top" Grid.Column="1" Width="166" Height="27" SelectedDateChanged="PickADay_SelectedDateChanged"/>
-                    <TextBox x:Name="NameTextBox" HorizontalAlignment="Left" Margin="396,42,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="174" Grid.Column="1" Height="23" TextChanged="NameTextBox_TextChanged"/>
+                    <ComboBox x:Name="TimeComboBox" HorizontalAlignment="Left" Margin="396,39,0,0" VerticalAlignment="Top" Width="174" Grid.Column="1" Height="29" SelectionChanged="TimeComboBox_SelectionChanged"/>
+                    <ComboBox x:Name="TableComboBox" HorizontalAlignment="Left" Margin="108,99,0,0" VerticalAlignment="Top" Width="166" Grid.Column="1" Height="29" SelectionChanged="TableComboBox_SelectionChanged">
+                        <ComboBoxItem>1</ComboBoxItem>
+                        <ComboBoxItem>2</ComboBoxItem>
+                        <ComboBoxItem>3</ComboBoxItem>
+                        <ComboBoxItem>4</ComboBoxItem>
+                        <ComboBoxItem>5</ComboBoxItem>
+                    </ComboBox>
+                    <DatePicker x:Name="PickADay" HorizontalAlignment="Left" Margin="108,40,0,0" VerticalAlignment="Top" Grid.Column="1" Width="166" Height="30" SelectedDateChanged="PickADay_SelectedDateChanged"/>
+                    <TextBox x:Name="NameTextBox" HorizontalAlignment="Left" Margin="108,156,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="166" Grid.Column="1" Height="22" TextChanged="NameTextBox_TextChanged"/>
                     <Button Content="Visa bokningar" HorizontalAlignment="Left" Margin="67,44,0,0" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" Width="230" Height="47" IsEnabled="False"/>
-                    <Button Name ="Book" Content="Boka" HorizontalAlignment="Left" Margin="258,149,0,0" VerticalAlignment="Top" Grid.Column="1" Height="36" Width="166" Click="Boka_Click"/>
+                    <Button Name ="Book" Content="Boka" HorizontalAlignment="Left" Margin="396,149,0,0" VerticalAlignment="Top" Grid.Column="1" Height="36" Width="174" Click="Boka_Click"/>
                     <Button Content="Avboka" HorizontalAlignment="Left" Margin="67,124,0,0" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" Width="230" Height="44" Click="Avboka_Click"/>
-                    <Label Grid.Column="1" Content="Tid" HorizontalAlignment="Left" Margin="108,76,0,0" VerticalAlignment="Top" Width="46"/>
-                    <Label Grid.Column="1" Content="Namn" HorizontalAlignment="Left" Margin="396,16,0,0" VerticalAlignment="Top" Height="26" Width="57"/>
-                    <Label Grid.Column="1" Content="Bordsnummer" HorizontalAlignment="Left" Margin="398,76,0,0" VerticalAlignment="Top"/>
+                    <Label Grid.Column="1" Content="Tid" HorizontalAlignment="Left" Margin="396,16,0,0" VerticalAlignment="Top" Width="46"/>
+                    <Label Grid.Column="1" Content="Namn" HorizontalAlignment="Left" Margin="108,133,0,0" VerticalAlignment="Top" Height="26" Width="57"/>
+                    <Label Grid.Column="1" Content="Bordsnummer" HorizontalAlignment="Left" Margin="108,75,0,0" VerticalAlignment="Top"/>
                     <Label Grid.Column="1" Content="Datum" HorizontalAlignment="Left" Margin="108,16,0,0" VerticalAlignment="Top" Width="83"/>
+                    <Label Content="Antal gäster" HorizontalAlignment="Left" Margin="396,75,0,0" VerticalAlignment="Top" Width="77" Grid.Column="1"/>
                 </Grid>
             </TabItem>
             <TabItem Header="Backup">
@@ -67,9 +76,9 @@
                         <ColumnDefinition Width="10*"/>
                         <ColumnDefinition Width="387*"/>
                     </Grid.ColumnDefinitions>
-                    <Button Content="Save to file" HorizontalAlignment="Left" Margin="94,155,0,0" VerticalAlignment="Top" Height="47" Width="193" Grid.Column="1"/>
-                    <Button Content="Load from file" HorizontalAlignment="Left" Margin="94,242,0,0" VerticalAlignment="Top" Height="47" Width="193" Grid.Column="1"/>
-                    <Label Content="Backup" HorizontalAlignment="Left" Margin="94,98,0,0" VerticalAlignment="Top" Grid.Column="1"/>
+                    <Button Content="Save to file" HorizontalAlignment="Left" Margin="94,155,0,0" VerticalAlignment="Top" Height="47" Width="193" Grid.Column="1" Click="SaveToFile_Click"/>
+                    <Button Content="Load from file" HorizontalAlignment="Left" Margin="94,242,0,0" VerticalAlignment="Top" Height="47" Width="193" Grid.Column="1" Click="LoadFromFile_Click"/>
+                    <Label Content="Backup:" HorizontalAlignment="Left" Margin="94,112,0,0" VerticalAlignment="Top" Grid.Column="1"/>
                 </Grid>
             </TabItem>
         </TabControl>
