@@ -60,7 +60,13 @@
                     </ComboBox>
                     <DatePicker x:Name="PickADay" HorizontalAlignment="Left" Margin="108,40,0,0" VerticalAlignment="Top" Grid.Column="1" Width="166" Height="30" SelectedDateChanged="PickADay_SelectedDateChanged"/>
                     <TextBox x:Name="NameTextBox" HorizontalAlignment="Left" Margin="108,156,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="166" Grid.Column="1" Height="22" TextChanged="NameTextBox_TextChanged"/>
-                    <Button Content="Visa bokningar" HorizontalAlignment="Left" Margin="67,44,0,0" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" Width="230" Height="47" IsEnabled="False"/>
+                    <Button Content="(Visa bokningar) vänta här för tooltip" HorizontalAlignment="Left" Margin="67,44,0,0" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" Width="230" Height="47" >
+                        <Button.ToolTip>
+                            <ToolTip MaxWidth="400" ToolTipService.InitialShowDelay="0" ToolTipService.ShowDuration="20000" ToolTipService.BetweenShowDelay="10000">
+                                <TextBlock Text="Funktionaliteten till krav 16 - (...)läsa från fil vid valet 'Visa bokningar' är kopplad till Backup knappen 'Load from file'. Jag bestämde att skriva en tooltip här istället för att radera knappen eller skriva isEnabled='false' i XAML" TextWrapping="Wrap" />
+                            </ToolTip>
+                        </Button.ToolTip>
+                    </Button>
                     <Button Name ="Book" Content="Boka" HorizontalAlignment="Left" Margin="396,149,0,0" VerticalAlignment="Top" Grid.Column="1" Height="36" Width="174" Click="Boka_Click"/>
                     <Button Content="Avboka" HorizontalAlignment="Left" Margin="67,124,0,0" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" Width="230" Height="44" Click="Avboka_Click"/>
                     <Label Grid.Column="1" Content="Tid" HorizontalAlignment="Left" Margin="396,16,0,0" VerticalAlignment="Top" Width="46"/>
