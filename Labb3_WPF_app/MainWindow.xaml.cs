@@ -65,9 +65,10 @@ namespace Labb3_WPF_app
 
         private void Boka_Click(object sender, RoutedEventArgs e)
         {
-            bool needMessageBox = true;
+            bool needMessageBox = true;          
             HelpMethods.InstertToList(needMessageBox, history, new BookingInfo(PickADay.Text, TimeComboBox.Text, TableComboBox.Text, NameTextBox.Text, AmountOfPeopleCombobox.Text));
             DisplayContent();
+            HelpMethods.updateListToFile(history);
             Clear();
 
         }
@@ -87,6 +88,7 @@ namespace Labb3_WPF_app
             {
                 history.Remove((BookingInfo)ConfirmedList.SelectedItem);
                 DisplayContent();
+                HelpMethods.updateListToFile(history);
             }
         }
         private void Clear()
@@ -143,7 +145,9 @@ namespace Labb3_WPF_app
                 int occupiedSeats = rnd.Next(1, 6);
 
                 HelpMethods.InstertToList(needMessageBox, history, new BookingInfo(randomDate.ToShortDateString(), hour[hourIndex], table.ToString(), exampleNames[nameIndex], occupiedSeats.ToString()));
+                //Metoden använder inte HelpMethods.updateListToFile(); för att värje gång man kör programmet det blir massor av bokningar sparad i filen. Men óm man vill, man kan spara alla data manuellt genom att trycka på save to file knappen i backup section.
                 DisplayContent();
+                
             }
         }
 
@@ -167,24 +171,24 @@ namespace Labb3_WPF_app
                 }
             }
         }
-        private void LoadFromFile_Click(object sender, RoutedEventArgs e)
-        {
-         
-            Microsoft.Win32.OpenFileDialog openDialog = new Microsoft.Win32.OpenFileDialog();
-            openDialog.FileName = $"Backup {DateTime.Now.ToShortDateString()}";
+        private void LoadFromFile_Click(object sender, RoutedEventArgs e)                                    //metoden lägger till bokningar till lista, det rensar inte befintlig data som finns sparad i history lista i programmet. 
+        {                                                                                                    //Tänkte att man använder load from file backup bara i början, efter t.ex. strömavbrott eller vid annat problem när lista är helt tömt.
+            Microsoft.Win32.OpenFileDialog openDialog = new Microsoft.Win32.OpenFileDialog();                //men om man vill att ladda data från filen och se endast data från filen (dvs. rensa history lista på en gång, man kan radera "//" som står vid 
+            openDialog.FileName = $"Backup {DateTime.Now.ToShortDateString()}";                              //history.Clear(); function
             openDialog.DefaultExt = ".txt";
             openDialog.Filter = "Backup files (.txt)|*.txt";
             Nullable<bool> result = openDialog.ShowDialog();
             if (result == true)
             {
+                //history.Clear();
                 string filename = openDialog.FileName;
                 string fromFile = "";
                 using (StreamReader sr = new StreamReader(filename))
                 {
                     fromFile = sr.ReadToEnd();
                 }
-                string[] separators =  { ",", "\r\n" };
-                string[] array = fromFile.Split(separators,StringSplitOptions.RemoveEmptyEntries);                                
+                string[] separators = { ",", "\r\n" };
+                string[] array = fromFile.Split(separators, StringSplitOptions.RemoveEmptyEntries);
                 if (array.Length > 0)
                 {
                     int num = 0;
@@ -194,7 +198,7 @@ namespace Labb3_WPF_app
                         string timeFromFile = array[num++];
                         string tableNumberFromFile = array[num++];
                         string nameFromFile = array[num++];
-                        string guestsAmountFromFile = array[num++];                       
+                        string guestsAmountFromFile = array[num++];
                         bool needMessageBox = false;
                         HelpMethods.InstertToList(needMessageBox, history, new BookingInfo(dateFromFile, timeFromFile, tableNumberFromFile, nameFromFile, guestsAmountFromFile));
                     }

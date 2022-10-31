@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace Labb3_WPF_app
     internal static class HelpMethods
     {
         public static void InstertToList(bool isMessageBoxNeeded, List<BookingInfo> inData, BookingInfo inCustomer)
-        {            
+        {
             bool checkIfAvailable = true;
             int seats = 0;
             List<BookingInfo> sameDateTimeTableReservations = new List<BookingInfo>();
@@ -29,18 +30,18 @@ namespace Labb3_WPF_app
                             }
                         }
                     }
-                }                
+                }
                 foreach (var item in sameDateTimeTableReservations)
                 {
                     seats += item.GuestsAmount;
-                }       
+                }
                 if (seats >= 5 || seats + inCustomer.GuestsAmount > 5)
                 {
                     if (isMessageBoxNeeded == true)
                     {
                         MessageBox.Show($"Tyvärr bordet nummer {inCustomer.TableNumber} är redan fullbokad. Försök boka ett annat bord eller välja annan datum alternativt dela kundens reservation på flera olika bord!", "Fullbokad bord", MessageBoxButton.OK, MessageBoxImage.Error);
                     }
-                    checkIfAvailable = false;                    
+                    checkIfAvailable = false;
                 }
                 else
                 {
@@ -49,12 +50,12 @@ namespace Labb3_WPF_app
             }
             if (checkIfAvailable == true)
             {
-                inData.Add(inCustomer);                
+                inData.Add(inCustomer);
                 if (isMessageBoxNeeded == true)
                 {
                     MessageBox.Show($"Bokning är klart. Kundnamn är: {inCustomer.Name}", "Bekräftelse", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
-            }           
+            }
         }
         public static void availableHours(DateTime startValue, DateTime endValue, DatePicker chooseDate, List<string> nameOfDay, ComboBox selectHour)
         {
@@ -89,6 +90,16 @@ namespace Labb3_WPF_app
                 }
             }
             selectHour.ItemsSource = nameOfDay;
+        }
+        public static void updateListToFile(List<BookingInfo> ReservationsList) //för att blanda inte funktionaliteten av updateListtoFile och Backup Save to file, här filen heter log och filen i backup heter backup. Man kan ladda båda två filer med loadfromfile function i backup
+        {
+            string secondPartOfFileName = DateTime.Now.ToShortDateString();
+            File.Delete($"log {secondPartOfFileName}.txt");
+            foreach (var item in ReservationsList)
+            {                
+                string DataInReservationsList = $"{item.Date},{item.Time},{item.TableNumber},{item.Name},{item.GuestsAmount}\r\n";
+                File.AppendAllText($"log {secondPartOfFileName}.txt", DataInReservationsList);                
+            }
         }
     }
 }
