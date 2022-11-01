@@ -91,9 +91,9 @@ namespace Labb3_WPF_app
             }
             selectHour.ItemsSource = nameOfDay;
         }
-        public static void updateListToFile(List<BookingInfo> ReservationsList) //för att blanda inte funktionaliteten av updateListtoFile och Backup Save to file, här filen heter log och filen i backup heter backup. Man kan ladda båda två filer med loadfromfile function i backup
-        {
-            string secondPartOfFileName = DateTime.Now.ToShortDateString();
+        public static void updateListToFile(List<BookingInfo> ReservationsList) // här metoden skapar fil log (dagens datum). Filen uppdaterar sig automatiskt värje gång man trycker på boka eller avboka knappar. Om man avbokar alla reservationer från lista,
+        {                                                                       // filen med dagens datum försvinner. För att blanda inte funktionaliteten av updateListtoFile och Backup Save to file, här filen heter log och filen i backup heter backup. 
+            string secondPartOfFileName = DateTime.Now.ToShortDateString();     //Man kan ladda båda två filer med loadfromfile function i backup.
             File.Delete($"log {secondPartOfFileName}.txt");
             foreach (var item in ReservationsList)
             {                

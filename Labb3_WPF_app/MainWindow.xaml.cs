@@ -150,7 +150,10 @@ namespace Labb3_WPF_app
                 
             }
         }
-
+        /// <summary>
+        ///För att blanda inte funktionaliteten av updateListtoFile och Backup Save to file, här filen heter log och filen i backup heter backup. 
+        ///Här kan man manuellt spara lista med bokningar till filen.  
+        /// </summary>       
         private void SaveToFile_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.SaveFileDialog saveDialog = new Microsoft.Win32.SaveFileDialog();
