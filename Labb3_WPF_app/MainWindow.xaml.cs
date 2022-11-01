@@ -29,7 +29,7 @@ namespace Labb3_WPF_app
         public MainWindow()
         {
             InitializeComponent();
-            StartExamplesRandom();  //detta metod skapar ett antal bokningar tillsammans med start av programmet. 
+            //StartExamplesRandom();  //detta metod skapar ett antal bokningar tillsammans med start av programmet. 
             BokaEnabled();
             DisplayContent();
             PickADay.BlackoutDates.AddDatesInPast();
@@ -47,7 +47,6 @@ namespace Labb3_WPF_app
             {
                 var picker = sender as DatePicker;
                 var date = picker.SelectedDate.Value.DayOfWeek.ToString();
-
                 if (date == "Saturday" || date == "Sunday")
                 {
                     HelpMethods.availableHours(startDate, endWeekend, picker, weekend, TimeComboBox);
@@ -67,10 +66,9 @@ namespace Labb3_WPF_app
         {
             bool needMessageBox = true;          
             HelpMethods.InstertToList(needMessageBox, history, new BookingInfo(PickADay.Text, TimeComboBox.Text, TableComboBox.Text, NameTextBox.Text, AmountOfPeopleCombobox.Text));
-            DisplayContent();
             HelpMethods.updateListToFile(history);
+            DisplayContent();          
             Clear();
-
         }
         private void DisplayContent()
         {
@@ -87,8 +85,8 @@ namespace Labb3_WPF_app
             else
             {
                 history.Remove((BookingInfo)ConfirmedList.SelectedItem);
-                DisplayContent();
                 HelpMethods.updateListToFile(history);
+                DisplayContent();                
             }
         }
         private void Clear()
@@ -138,16 +136,13 @@ namespace Labb3_WPF_app
             {
                 Random rnd = new Random();
                 int randomDay = rnd.Next(0, 30);
-                DateTime randomDate = DateTime.Now.AddDays(randomDay);
-                int nameIndex = rnd.Next(exampleNames.Length);
+                DateTime randomDate = DateTime.Now.AddDays(randomDay);                                          //Metoden använder inte HelpMethods.updateListToFile(); för att värje gång man kör programmet det blir massor av bokningar sparad i filen.
+                int nameIndex = rnd.Next(exampleNames.Length);                                                  //  Men óm man vill, man kan spara alla data manuellt genom att trycka på save to file knappen i backup section.
                 int hourIndex = rnd.Next(hour.Length);
                 int table = rnd.Next(1, 6);
                 int occupiedSeats = rnd.Next(1, 6);
-
                 HelpMethods.InstertToList(needMessageBox, history, new BookingInfo(randomDate.ToShortDateString(), hour[hourIndex], table.ToString(), exampleNames[nameIndex], occupiedSeats.ToString()));
-                //Metoden använder inte HelpMethods.updateListToFile(); för att värje gång man kör programmet det blir massor av bokningar sparad i filen. Men óm man vill, man kan spara alla data manuellt genom att trycka på save to file knappen i backup section.
-                DisplayContent();
-                
+                DisplayContent();   
             }
         }
         /// <summary>
