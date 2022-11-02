@@ -7,18 +7,18 @@ using System.Windows.Controls;
 
 namespace Labb3_WPF_app
 {
-    interface ReservationKravförG
+    interface IReservationKravförG
     {
         string Date { get; set; }
         string Time { get; set; }
         string TableNumber { get; set; }
         string Name { get; set; }
     }
-    interface ReservationKravförVG
+    interface IReservationKravförVG
     {        
         string GuestsAmount { get; set; }
     }
-    internal class BookingInfo : ReservationKravförG, ReservationKravförVG
+    internal class BookingInfo : IReservationKravförG, IReservationKravförVG
     {
         public string Date { get; set; }
         public string Time { get; set; }

@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics.Arm;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -31,20 +32,23 @@ namespace Labb3_WPF_app
         public MainWindow()
         {
             InitializeComponent();
-            StartExamplesRandom();  //detta metod skapar ett antal bokningar tillsammans med start av programmet. 
+            StartExamplesRandom();  //Denna metod skapar ett antal bokningar tillsammans med start av programmet. 
             BokaEnabled();
             DisplayContent();
-            PickADay.BlackoutDates.AddDatesInPast();
+            PickADay.BlackoutDates.AddDatesInPast();                                                        //Jag använder en blackout metod för att begränsa användarens väl - 30 dagar from och med dagens datum
             PickADay.BlackoutDates.Add(new CalendarDateRange(DateTime.Now.AddDays(30), DateTime.MaxValue));
         }
+        /// <summary>
+        /// Metoden visar olika timmar att välja i combobox TimeCombobox beröende på användarens väl i datepicker
+        /// </summary>      
         public void PickADay_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
 
             List<string> workingday = new();                    //i olika platser i min kod fick jag meddelande att "new" uttryck kan vara förenklad -  så jag gjorde det. Före redigering var:  List<string> workingday = new List<string>();
             List<string> weekend = new();
-            DateTime startDate = new(2022, 01, 01, 18, 00, 00);
-            DateTime endWorkingday = new(2022, 01, 01, 22, 00, 00);
-            DateTime endWeekend = new(2022, 01, 02, 00, 00, 00);
+            DateTime startDate = new(2022, 01, 01, 18, 00, 00);     //restaurangen öppnar sina bokningar fom kl 18:00            Datum är inte viktigt, jag skrev hela datum för att sätta själv timmar och minuter i DateTime
+            DateTime endWorkingday = new(2022, 01, 01, 22, 00, 00); //sista bokningstid på vårdag är kl 22:00
+            DateTime endWeekend = new(2022, 01, 02, 00, 00, 00);    //sista bokningstid i helgen är kl 00:00
             if (PickADay.SelectedDate != null)
             {
                 var picker = sender as DatePicker;
@@ -63,7 +67,9 @@ namespace Labb3_WPF_app
                 BokaEnabled();
             }
         }
-
+        /// <summary>
+        /// Metoden skapar bokning till filen och visar information i listbox confirmedlist på en gång
+        /// </summary>
         private async void Boka_Click(object sender, RoutedEventArgs e)
         {
             bool needMessageBox = true;
@@ -72,12 +78,17 @@ namespace Labb3_WPF_app
             DisplayContent();
             Clear();
         }
+        /// <summary>
+        /// metoden som uppdaterar listbox confirmedlist
+        /// </summary>
         private void DisplayContent()
         {
             ConfirmedList.ItemsSource = null;
             ConfirmedList.ItemsSource = history;
         }
-
+        /// <summary>
+        /// metoden som raderar bokningsinformation från listbox confirmedlist och från filen genom att trycka på knappen avboka
+        /// </summary>    
         private async void Avboka_Click(object sender, RoutedEventArgs e)
         {
             if (ConfirmedList.SelectedItem == null)
@@ -91,6 +102,9 @@ namespace Labb3_WPF_app
                 DisplayContent();
             }
         }
+        /// <summary>
+        /// en metod för att rensa rutor efter bokning
+        /// </summary>
         private void Clear()
         {
             PickADay.SelectedDate = null;
@@ -99,6 +113,9 @@ namespace Labb3_WPF_app
             AmountOfPeopleCombobox.SelectedValue = null;
             NameTextBox.Text = "";
         }
+        /// <summary>
+        /// En metod som aktiverar knappen "boka" när användaren skapar en bokning
+        /// </summary>
         private void BokaEnabled()
         {
             if (PickADay.SelectedDate == null || TimeComboBox.SelectedItem == null || TableComboBox.SelectedItem == null || NameTextBox.Text.Length == 0 || AmountOfPeopleCombobox.SelectedItem == null)
@@ -129,7 +146,10 @@ namespace Labb3_WPF_app
         {
             BokaEnabled();
         }
-        private void StartExamplesRandom()  //metod för att lägga till ett antal bokningar redo att visas
+        /// <summary>
+        /// metod för att lägga till ett antal bokningar redo att visas
+        /// </summary>
+        private void StartExamplesRandom()  
         {
             bool needMessageBox = false;
             string[] exampleNames = { "Gunilla", "Birgitta", "Anders", "Magnus", "Sigvard" };
@@ -148,7 +168,7 @@ namespace Labb3_WPF_app
             }
         }
         /// <summary>
-        ///Jag skapade savetoFile metoden för att skapa fil med  eget namn. Annars metoden updateListToFile hanterar lista uppdateringar i fil med namn log (dagens datum) (filen uppdaterar sig värje gång man trycker på boka och avboka knappar)
+        ///Jag skapade savetoFile metoden för att skapa fil med  eget namn(Jag tänkte att testing av programmet blir lättare med detta). Annars metoden updateListToFile hanterar list uppdateringar i filen: log(dagens datum)
         /// </summary>       
         private async void SaveToFile_Click(object sender, RoutedEventArgs e)
         {
@@ -174,6 +194,9 @@ namespace Labb3_WPF_app
                 }
             }
         }
+        /// <summary>
+        /// OBS! Funktionaliteten som är beskriven i punkt 16 från krav för vg (...) läsa från fil vid valet ”Visa bokningar”)(...) är flyttad till knapp load from file i sektion backup      
+        /// </summary>      
         private async void LoadFromFile_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.OpenFileDialog openDialog = new()
@@ -185,7 +208,7 @@ namespace Labb3_WPF_app
             Nullable<bool> result = openDialog.ShowDialog();
             if (result == true)
             {
-                history.Clear();
+                history.Clear();                //här lista som innehåller alla bokningar blir rensad före man laddar upp bokningar från filen. 
                 try
                 {
                     using FileStream openStream = File.OpenRead(openDialog.FileName);
