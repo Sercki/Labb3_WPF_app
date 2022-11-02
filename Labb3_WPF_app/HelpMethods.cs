@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Printing;
 using System.Text;
+using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,37 +18,33 @@ namespace Labb3_WPF_app
         {
             bool checkIfAvailable = true;
             int seats = 0;
-            List<BookingInfo> sameDateTimeTableReservations = new List<BookingInfo>();
+            List<BookingInfo> sameDateTimeTableReservations = new();
             if (inData.Count > 0)
             {
-                foreach (var customerBookingInfo in inData)
+                try
                 {
-                    if (customerBookingInfo.Date == inCustomer.Date)
+                    var sameReservationDetails = inData.Where(customerBookingInfo => customerBookingInfo.Date == inCustomer.Date && customerBookingInfo.Time == inCustomer.Time && customerBookingInfo.TableNumber == inCustomer.TableNumber);
+                    foreach (var reservation in sameReservationDetails)
                     {
-                        if (customerBookingInfo.Time == inCustomer.Time)
+                        sameDateTimeTableReservations.Add(reservation);
+                    }
+                    sameDateTimeTableReservations.ForEach(reservation => seats += int.Parse(reservation.GuestsAmount));
+                    if (seats >= 5 || seats + int.Parse(inCustomer.GuestsAmount) > 5)
+                    {
+                        if (isMessageBoxNeeded == true)
                         {
-                            if (customerBookingInfo.TableNumber == inCustomer.TableNumber)
-                            {//tutaj dodano           
-                                sameDateTimeTableReservations.Add(customerBookingInfo);
-                            }
+                            MessageBox.Show($"Tyvärr bordet nummer {inCustomer.TableNumber} är redan fullbokad. Försök boka ett annat bord eller välja annan datum alternativt dela kundens reservation på flera olika bord!", "Fullbokad bord", MessageBoxButton.OK, MessageBoxImage.Error);
                         }
+                        checkIfAvailable = false;
                     }
-                }
-                foreach (var item in sameDateTimeTableReservations)
-                {
-                    seats += item.GuestsAmount;
-                }
-                if (seats >= 5 || seats + inCustomer.GuestsAmount > 5)
-                {
-                    if (isMessageBoxNeeded == true)
+                    else
                     {
-                        MessageBox.Show($"Tyvärr bordet nummer {inCustomer.TableNumber} är redan fullbokad. Försök boka ett annat bord eller välja annan datum alternativt dela kundens reservation på flera olika bord!", "Fullbokad bord", MessageBoxButton.OK, MessageBoxImage.Error);
+                        checkIfAvailable = true;
                     }
-                    checkIfAvailable = false;
                 }
-                else
+                catch (Exception Ex)
                 {
-                    checkIfAvailable = true;
+                    MessageBox.Show(Ex.Message, "oops!", MessageBoxButton.OK,MessageBoxImage.Error);
                 }
             }
             if (checkIfAvailable == true)
@@ -57,48 +56,54 @@ namespace Labb3_WPF_app
                 }
             }
         }
-        public static void availableHours(DateTime startValue, DateTime endValue, DatePicker chooseDate, List<string> nameOfDay, ComboBox selectHour)
+        public static void AvailableHours(DateTime startValue, DateTime endValue, DatePicker chooseDate, List<string> TitleOfDayList, ComboBox selectHour)
         {
-            DateTime Midnight = new DateTime(2022, 01, 02, 00, 00, 00);
+            DateTime Midnight = new(2022, 01, 02, 00, 00, 00);
             for (DateTime dtm = startValue; dtm <= endValue; dtm = dtm.AddMinutes(30))
             {
-                if (chooseDate.SelectedDate == DateTime.Today)
+                try
                 {
-                    if (dtm.Hour == DateTime.Now.Hour)
+                    if (chooseDate.SelectedDate == DateTime.Today)
                     {
-                        if (dtm.Minute > DateTime.Now.Minute)
+                        if (dtm.Hour == DateTime.Now.Hour)
                         {
-                            nameOfDay.Add(dtm.ToString("HH:mm"));
+                            if (dtm.Minute > DateTime.Now.Minute)
+                            {
+                                TitleOfDayList.Add(dtm.ToString("HH:mm"));
+                            }
                         }
-                        else
+                        else if (dtm.Hour > DateTime.Now.Hour || dtm.Hour == Midnight.Hour) //skapade variabel midnight  och en till vilkor (till höger från || )  i else if sats eftersom option 00:00 försvinner plötsligt om man testar programmet i helgen  
                         {
-                            continue;
+                            TitleOfDayList.Add(dtm.ToString("HH:mm"));
                         }
-                    }
-                    else if (dtm.Hour > DateTime.Now.Hour || dtm.Hour == Midnight.Hour) //skapade variabel midnight  och en till vilkor (till höger från || )  i else if sats eftersom option 00:00 försvinner plötsligt om man testar programmet i helgen  
-                    {
-                        nameOfDay.Add(dtm.ToString("HH:mm"));
                     }
                     else
                     {
-                        continue;
+                        TitleOfDayList.Add(dtm.ToString("HH:mm"));
                     }
                 }
-                else
+                catch (Exception Ex)
                 {
-                    nameOfDay.Add(dtm.ToString("HH:mm"));
+
+                    MessageBox.Show(Ex.Message, "oops!", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
+
             }
-            selectHour.ItemsSource = nameOfDay;
+            selectHour.ItemsSource = TitleOfDayList;
         }
-        public static void updateListToFile(List<BookingInfo> ReservationsList) //för att blanda inte funktionaliteten av updateListtoFile och Backup Save to file, här filen heter log och filen i backup heter backup. Man kan ladda båda två filer med loadfromfile function i backup
+        public static async Task UpdateListToFile(List<BookingInfo> ReservationsList)
         {
-            string secondPartOfFileName = DateTime.Now.ToShortDateString();
-            File.Delete($"log {secondPartOfFileName}.txt");
-            foreach (var item in ReservationsList)
-            {                
-                string DataInReservationsList = $"{item.Date},{item.Time},{item.TableNumber},{item.Name},{item.GuestsAmount}\r\n";
-                File.AppendAllText($"log {secondPartOfFileName}.txt", DataInReservationsList);                
+            try
+            {
+                string FileName = $"log {DateTime.Now.ToShortDateString()}.json";   // här metoden skapar fil log (dagens datum). Filen uppdaterar sig automatiskt värje gång man trycker på boka eller avboka knappar. Om man avbokar alla reservationer från lista,
+                using FileStream createStream = File.Create(FileName);
+                await JsonSerializer.SerializeAsync(createStream, ReservationsList);
+                await createStream.DisposeAsync();
+            }
+            catch (Exception Ex)
+            {
+
+                MessageBox.Show(Ex.Message, "oops!", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

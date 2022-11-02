@@ -63,7 +63,7 @@
                     <Button Content="(Visa bokningar) vänta här för tooltip" HorizontalAlignment="Left" Margin="67,44,0,0" VerticalAlignment="Top" Grid.Column="1" Grid.Row="1" Width="230" Height="47" >
                         <Button.ToolTip>
                             <ToolTip MaxWidth="400" ToolTipService.InitialShowDelay="0" ToolTipService.ShowDuration="20000" ToolTipService.BetweenShowDelay="10000">
-                                <TextBlock Text="Funktionaliteten till krav 16 - (...)läsa från fil vid valet 'Visa bokningar' är kopplad till Backup knappen 'Load from file'. Jag bestämde att skriva en tooltip här istället för att radera knappen eller skriva isEnabled='false' i XAML" TextWrapping="Wrap" />
+                                <TextBlock Text="Funktionaliteten till krav 16 - (...)läsa från fil vid valet 'Visa bokningar'(...) är kopplad till Backup knappen 'Load from file'. Jag bestämde att skriva en tooltip här istället för att radera knappen eller skriva isEnabled='false' i XAML" TextWrapping="Wrap" />
                             </ToolTip>
                         </Button.ToolTip>
                     </Button>

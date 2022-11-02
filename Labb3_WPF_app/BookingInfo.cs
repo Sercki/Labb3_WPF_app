@@ -16,7 +16,7 @@ namespace Labb3_WPF_app
     }
     interface ReservationKravförVG
     {        
-        int GuestsAmount { get; set; }
+        string GuestsAmount { get; set; }
     }
     internal class BookingInfo : ReservationKravförG, ReservationKravförVG
     {
@@ -24,15 +24,15 @@ namespace Labb3_WPF_app
         public string Time { get; set; }
         public string TableNumber { get; set; }
         public string Name { get; set; }
-        public int GuestsAmount { get; set; }
+        public string GuestsAmount { get; set; }
 
-        public BookingInfo(string date, string time, string tableNumber, string name, string GuestsNumber)
+        public BookingInfo(string date, string time, string tableNumber, string name, string guestsAmount)
         {
             this.Date = date;
             this.Time = time;
             this.TableNumber = tableNumber;
             this.Name = name;
-            this.GuestsAmount = int.Parse(GuestsNumber);
+            this.GuestsAmount = guestsAmount;
         }
     }
 }
