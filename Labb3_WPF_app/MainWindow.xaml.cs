@@ -26,7 +26,7 @@ namespace Labb3_WPF_app
     /// </summary>
     public partial class MainWindow : Window
     {
-        List<BookingInfo> history = new List<BookingInfo>();
+        List<BookingInfo> history = new();
 
         public MainWindow()
         {
@@ -40,22 +40,22 @@ namespace Labb3_WPF_app
         public void PickADay_SelectedDateChanged(object sender, SelectionChangedEventArgs e)
         {
 
-            List<string> workingday = new List<string>();
-            List<string> weekend = new List<string>();
-            DateTime startDate = new DateTime(2022, 01, 01, 18, 00, 00);
-            DateTime endWorkingday = new DateTime(2022, 01, 01, 22, 00, 00);
-            DateTime endWeekend = new DateTime(2022, 01, 02, 00, 00, 00);
+            List<string> workingday = new();                    //i olika platser i min kod fick jag meddelande att "new" uttryck kan vara förenklad -  så jag gjorde det. Före redigering var:  List<string> workingday = new List<string>();
+            List<string> weekend = new();
+            DateTime startDate = new(2022, 01, 01, 18, 00, 00);
+            DateTime endWorkingday = new(2022, 01, 01, 22, 00, 00);
+            DateTime endWeekend = new(2022, 01, 02, 00, 00, 00);
             if (PickADay.SelectedDate != null)
             {
                 var picker = sender as DatePicker;
-                var date = picker.SelectedDate.Value.DayOfWeek.ToString();
+                var date = picker.SelectedDate.Value.DayOfWeek.ToString();  //DatePicker är begränsad med BlackoutDates så jag tycker inte att  det finns risk för ArgumentOutOfRangeException - därför jag använder inte try-catch här
                 if (date == "Saturday" || date == "Sunday")
                 {
-                    HelpMethods.availableHours(startDate, endWeekend, picker, weekend, TimeComboBox);
+                    HelpMethods.AvailableHours(startDate, endWeekend, picker, weekend, TimeComboBox);
                 }
                 else
                 {
-                    HelpMethods.availableHours(startDate, endWorkingday, picker, workingday, TimeComboBox);
+                    HelpMethods.AvailableHours(startDate, endWorkingday, picker, workingday, TimeComboBox);
                 }
             }
             else
@@ -66,10 +66,9 @@ namespace Labb3_WPF_app
 
         private async void Boka_Click(object sender, RoutedEventArgs e)
         {
-            string stream = "input";
             bool needMessageBox = true;
             HelpMethods.InstertToList(needMessageBox, history, new BookingInfo(PickADay.Text, TimeComboBox.Text, TableComboBox.Text, NameTextBox.Text, AmountOfPeopleCombobox.Text));
-            await HelpMethods.updateListToFile(history);
+            await HelpMethods.UpdateListToFile(history);
             DisplayContent();
             Clear();
         }
@@ -88,7 +87,7 @@ namespace Labb3_WPF_app
             else
             {
                 history.Remove((BookingInfo)ConfirmedList.SelectedItem);
-                await HelpMethods.updateListToFile(history);
+                await HelpMethods.UpdateListToFile(history);
                 DisplayContent();
             }
         }
@@ -137,8 +136,8 @@ namespace Labb3_WPF_app
             string[] hour = { "18:00", "18:30", "19:00", "19:30", "20:00", "20:30", "21:00", "21:30", "22:00" };
             while (history.Count < 20)    //för att minska antalet av bokningar redo att visas med start av programmet, jag rekommenderar att ändra siffra vid (history.Count < ) 
             {
-                Random rnd = new Random();
-                int randomDay = rnd.Next(0, 30);
+                Random rnd = new();
+                int randomDay = rnd.Next(0, 30); 
                 DateTime randomDate = DateTime.Now.AddDays(randomDay);                                          //OBS! Metoden använder inte HelpMethods.updateListToFile(); - Metoden sparar inte data till filen log
                 int nameIndex = rnd.Next(exampleNames.Length);
                 int hourIndex = rnd.Next(hour.Length);
@@ -153,33 +152,53 @@ namespace Labb3_WPF_app
         /// </summary>       
         private async void SaveToFile_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.SaveFileDialog saveDialog = new Microsoft.Win32.SaveFileDialog();
-            saveDialog.FileName = $"Backup {DateTime.Now.ToShortDateString()}";
-            saveDialog.DefaultExt = ".json";
-            saveDialog.Filter = "Backup files (.json)|*.json";
+            Microsoft.Win32.SaveFileDialog saveDialog = new()
+            {
+                FileName = $"Backup {DateTime.Now.ToShortDateString()}",
+                DefaultExt = ".json",
+                Filter = "Backup files (.json)|*.json"
+            };
             Nullable<bool> result = saveDialog.ShowDialog();
             if (result == true)
             {
-                using FileStream createStream = File.Create(saveDialog.FileName);
-                await JsonSerializer.SerializeAsync(createStream, history);
-                await createStream.DisposeAsync();
+                try
+                {
+                    using FileStream createStream = File.Create(saveDialog.FileName);
+                    await JsonSerializer.SerializeAsync(createStream, history);
+                    await createStream.DisposeAsync();
+                }
+                catch (Exception Ex)
+                {
+
+                    MessageBox.Show(Ex.Message, "oops!", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
         private async void LoadFromFile_Click(object sender, RoutedEventArgs e)
         {
-            Microsoft.Win32.OpenFileDialog openDialog = new Microsoft.Win32.OpenFileDialog();
-            openDialog.FileName = $"Backup {DateTime.Now.ToShortDateString()}";
-            openDialog.DefaultExt = ".json";
-            openDialog.Filter = "Backup files (.json)|*.json";
+            Microsoft.Win32.OpenFileDialog openDialog = new()
+            {
+                FileName = $"Backup {DateTime.Now.ToShortDateString()}",
+                DefaultExt = ".json",
+                Filter = "Backup files (.json)|*.json"
+            };
             Nullable<bool> result = openDialog.ShowDialog();
             if (result == true)
             {
                 history.Clear();
-                using FileStream openStream = File.OpenRead(openDialog.FileName);
-                List<BookingInfo>? getBookInfo = await JsonSerializer.DeserializeAsync<List<BookingInfo>>(openStream);
-                if (getBookInfo != null)
+                try
                 {
-                    history.AddRange(getBookInfo);
+                    using FileStream openStream = File.OpenRead(openDialog.FileName);
+                    List<BookingInfo>? getBookInfo = await JsonSerializer.DeserializeAsync<List<BookingInfo>>(openStream);
+                    if (getBookInfo != null)
+                    {
+                        history.AddRange(getBookInfo);
+                    }
+                }
+                catch (Exception Ex)
+                {
+
+                    MessageBox.Show(Ex.Message, "oops!", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
                 DisplayContent();
             }
