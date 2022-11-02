@@ -4,8 +4,10 @@ using System.DirectoryServices.ActiveDirectory;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Runtime.Intrinsics.Arm;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -29,7 +31,7 @@ namespace Labb3_WPF_app
         public MainWindow()
         {
             InitializeComponent();
-            //StartExamplesRandom();  //detta metod skapar ett antal bokningar tillsammans med start av programmet. 
+            StartExamplesRandom();  //detta metod skapar ett antal bokningar tillsammans med start av programmet. 
             BokaEnabled();
             DisplayContent();
             PickADay.BlackoutDates.AddDatesInPast();
@@ -62,12 +64,13 @@ namespace Labb3_WPF_app
             }
         }
 
-        private void Boka_Click(object sender, RoutedEventArgs e)
+        private async void Boka_Click(object sender, RoutedEventArgs e)
         {
-            bool needMessageBox = true;          
+            string stream = "input";
+            bool needMessageBox = true;
             HelpMethods.InstertToList(needMessageBox, history, new BookingInfo(PickADay.Text, TimeComboBox.Text, TableComboBox.Text, NameTextBox.Text, AmountOfPeopleCombobox.Text));
-            HelpMethods.updateListToFile(history);
-            DisplayContent();          
+            await HelpMethods.updateListToFile(history);
+            DisplayContent();
             Clear();
         }
         private void DisplayContent()
@@ -76,7 +79,7 @@ namespace Labb3_WPF_app
             ConfirmedList.ItemsSource = history;
         }
 
-        private void Avboka_Click(object sender, RoutedEventArgs e)
+        private async void Avboka_Click(object sender, RoutedEventArgs e)
         {
             if (ConfirmedList.SelectedItem == null)
             {
@@ -85,8 +88,8 @@ namespace Labb3_WPF_app
             else
             {
                 history.Remove((BookingInfo)ConfirmedList.SelectedItem);
-                HelpMethods.updateListToFile(history);
-                DisplayContent();                
+                await HelpMethods.updateListToFile(history);
+                DisplayContent();
             }
         }
         private void Clear()
@@ -136,72 +139,49 @@ namespace Labb3_WPF_app
             {
                 Random rnd = new Random();
                 int randomDay = rnd.Next(0, 30);
-                DateTime randomDate = DateTime.Now.AddDays(randomDay);                                          //Metoden använder inte HelpMethods.updateListToFile(); för att värje gång man kör programmet det blir massor av bokningar sparad i filen.
-                int nameIndex = rnd.Next(exampleNames.Length);                                                  //  Men óm man vill, man kan spara alla data manuellt genom att trycka på save to file knappen i backup section.
+                DateTime randomDate = DateTime.Now.AddDays(randomDay);                                          //OBS! Metoden använder inte HelpMethods.updateListToFile(); - Metoden sparar inte data till filen log
+                int nameIndex = rnd.Next(exampleNames.Length);
                 int hourIndex = rnd.Next(hour.Length);
                 int table = rnd.Next(1, 6);
                 int occupiedSeats = rnd.Next(1, 6);
                 HelpMethods.InstertToList(needMessageBox, history, new BookingInfo(randomDate.ToShortDateString(), hour[hourIndex], table.ToString(), exampleNames[nameIndex], occupiedSeats.ToString()));
-                DisplayContent();   
+                DisplayContent();
             }
         }
         /// <summary>
-        ///För att blanda inte funktionaliteten av updateListtoFile och Backup Save to file, här filen heter log och filen i backup heter backup. 
-        ///Här kan man manuellt spara lista med bokningar till filen.  
+        ///Jag skapade savetoFile metoden för att skapa fil med  eget namn. Annars metoden updateListToFile hanterar lista uppdateringar i fil med namn log (dagens datum) (filen uppdaterar sig värje gång man trycker på boka och avboka knappar)
         /// </summary>       
-        private void SaveToFile_Click(object sender, RoutedEventArgs e)
+        private async void SaveToFile_Click(object sender, RoutedEventArgs e)
         {
             Microsoft.Win32.SaveFileDialog saveDialog = new Microsoft.Win32.SaveFileDialog();
             saveDialog.FileName = $"Backup {DateTime.Now.ToShortDateString()}";
-            saveDialog.DefaultExt = ".txt";
-            saveDialog.Filter = "Backup files (.txt)|*.txt";
+            saveDialog.DefaultExt = ".json";
+            saveDialog.Filter = "Backup files (.json)|*.json";
             Nullable<bool> result = saveDialog.ShowDialog();
             if (result == true)
             {
-                string filename = saveDialog.FileName;
-                using (StreamWriter sw = new StreamWriter(filename))
-                {
-                    foreach (var booking in history)
-                    {
-                        string data = $"{booking.Date},{booking.Time},{booking.TableNumber},{booking.Name},{booking.GuestsAmount}";
-                        sw.WriteLine(data);
-                    }
-                }
+                using FileStream createStream = File.Create(saveDialog.FileName);
+                await JsonSerializer.SerializeAsync(createStream, history);
+                await createStream.DisposeAsync();
             }
         }
-        private void LoadFromFile_Click(object sender, RoutedEventArgs e)                                    //metoden lägger till bokningar till lista, det rensar inte befintlig data som finns sparad i history lista i programmet. 
-        {                                                                                                    //Tänkte att man använder load from file backup bara i början, efter t.ex. strömavbrott eller vid annat problem när lista är helt tömt.
-            Microsoft.Win32.OpenFileDialog openDialog = new Microsoft.Win32.OpenFileDialog();                //men om man vill att ladda data från filen och se endast data från filen (dvs. rensa history lista på en gång, man kan radera "//" som står vid 
-            openDialog.FileName = $"Backup {DateTime.Now.ToShortDateString()}";                              //history.Clear(); function
-            openDialog.DefaultExt = ".txt";
-            openDialog.Filter = "Backup files (.txt)|*.txt";
+        private async void LoadFromFile_Click(object sender, RoutedEventArgs e)
+        {
+            Microsoft.Win32.OpenFileDialog openDialog = new Microsoft.Win32.OpenFileDialog();
+            openDialog.FileName = $"Backup {DateTime.Now.ToShortDateString()}";
+            openDialog.DefaultExt = ".json";
+            openDialog.Filter = "Backup files (.json)|*.json";
             Nullable<bool> result = openDialog.ShowDialog();
             if (result == true)
             {
-                //history.Clear();
-                string filename = openDialog.FileName;
-                string fromFile = "";
-                using (StreamReader sr = new StreamReader(filename))
+                history.Clear();
+                using FileStream openStream = File.OpenRead(openDialog.FileName);
+                List<BookingInfo>? getBookInfo = await JsonSerializer.DeserializeAsync<List<BookingInfo>>(openStream);
+                if (getBookInfo != null)
                 {
-                    fromFile = sr.ReadToEnd();
+                    history.AddRange(getBookInfo);
                 }
-                string[] separators = { ",", "\r\n" };
-                string[] array = fromFile.Split(separators, StringSplitOptions.RemoveEmptyEntries);
-                if (array.Length > 0)
-                {
-                    int num = 0;
-                    while (num < array.Length)
-                    {
-                        string dateFromFile = array[num++];
-                        string timeFromFile = array[num++];
-                        string tableNumberFromFile = array[num++];
-                        string nameFromFile = array[num++];
-                        string guestsAmountFromFile = array[num++];
-                        bool needMessageBox = false;
-                        HelpMethods.InstertToList(needMessageBox, history, new BookingInfo(dateFromFile, timeFromFile, tableNumberFromFile, nameFromFile, guestsAmountFromFile));
-                    }
-                    DisplayContent();
-                }
+                DisplayContent();
             }
         }
     }

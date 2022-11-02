@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Printing;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -18,15 +20,15 @@ namespace Labb3_WPF_app
             int seats = 0;
             List<BookingInfo> sameDateTimeTableReservations = new List<BookingInfo>();
             if (inData.Count > 0)
-            {                
-                var sameReservationDetails = inData.Where(customerBookingInfo => customerBookingInfo.Date == inCustomer.Date && customerBookingInfo.Time == inCustomer.Time && customerBookingInfo.TableNumber == inCustomer.TableNumber);    
+            {
+                var sameReservationDetails = inData.Where(customerBookingInfo => customerBookingInfo.Date == inCustomer.Date && customerBookingInfo.Time == inCustomer.Time && customerBookingInfo.TableNumber == inCustomer.TableNumber);
                 foreach (var reservation in sameReservationDetails)
                 {
-                    sameDateTimeTableReservations.Add(reservation);                                                                                                                 
+                    sameDateTimeTableReservations.Add(reservation);
                 }
-                sameDateTimeTableReservations.ForEach(reservation => seats += reservation.GuestsAmount);
-
-                if (seats >= 5 || seats + inCustomer.GuestsAmount > 5)
+                sameDateTimeTableReservations.ForEach(reservation => seats += int.Parse(reservation.GuestsAmount));
+                                                                                                                                                                            //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!jest int.parse - dac try catch tutaj
+                if (seats >= 5 || seats + int.Parse(inCustomer.GuestsAmount) > 5)
                 {
                     if (isMessageBoxNeeded == true)
                     {
@@ -74,15 +76,12 @@ namespace Labb3_WPF_app
             }
             selectHour.ItemsSource = TitleOfDayList;
         }
-        public static void updateListToFile(List<BookingInfo> ReservationsList) // här metoden skapar fil log (dagens datum). Filen uppdaterar sig automatiskt värje gång man trycker på boka eller avboka knappar. Om man avbokar alla reservationer från lista,
-        {                                                                       // filen med dagens datum försvinner. För att blanda inte funktionaliteten av updateListtoFile och Backup Save to file, här filen heter log och filen i backup heter backup. 
-            string secondPartOfFileName = DateTime.Now.ToShortDateString();     //Man kan ladda båda två filer med loadfromfile function i backup.
-            File.Delete($"log {secondPartOfFileName}.txt");
-            foreach (var item in ReservationsList)
-            {
-                string DataInReservationsList = $"{item.Date},{item.Time},{item.TableNumber},{item.Name},{item.GuestsAmount}\r\n";
-                File.AppendAllText($"log {secondPartOfFileName}.txt", DataInReservationsList);
-            }
+        public static async Task updateListToFile(List<BookingInfo> ReservationsList)
+        {
+            string FileName = $"log {DateTime.Now.ToShortDateString()}.json";   // här metoden skapar fil log (dagens datum). Filen uppdaterar sig automatiskt värje gång man trycker på boka eller avboka knappar. Om man avbokar alla reservationer från lista,
+            using FileStream createStream = File.Create(FileName);
+            await JsonSerializer.SerializeAsync(createStream, ReservationsList);
+            await createStream.DisposeAsync();
         }
     }
 }
