@@ -46,7 +46,7 @@ namespace Labb3_WPF_app
 
             List<string> workingday = new();                    //i olika platser i min kod fick jag meddelande att "new" uttryck kan vara förenklad -  så jag gjorde det. Före redigering var:  List<string> workingday = new List<string>();
             List<string> weekend = new();
-            DateTime startDate = new(2022, 01, 01, 18, 00, 00);     //restaurangen öppnar sina bokningar fom kl 18:00            Datum är inte viktigt, jag skrev hela datum för att sätta själv timmar och minuter i DateTime
+            DateTime startDate = new(2022, 01, 01, 18, 00, 00);     //restaurangen öppnar sina bokningar fom kl 18:00            OBS! Dag/månad/år är inte viktigt, Det är timmar från variablerna som jag använder senare i metoden
             DateTime endWorkingday = new(2022, 01, 01, 22, 00, 00); //sista bokningstid på vårdag är kl 22:00
             DateTime endWeekend = new(2022, 01, 02, 00, 00, 00);    //sista bokningstid i helgen är kl 00:00
             if (PickADay.SelectedDate != null)
@@ -68,7 +68,7 @@ namespace Labb3_WPF_app
             }
         }
         /// <summary>
-        /// Metoden skapar bokning till filen och visar information i listbox confirmedlist på en gång
+        /// Metoden sparar nyskapad bokning i filen och visar information i listbox confirmedlist på en gång
         /// </summary>
         private async void Boka_Click(object sender, RoutedEventArgs e)
         {
@@ -130,7 +130,7 @@ namespace Labb3_WPF_app
 
         private void NameTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            BokaEnabled();
+            BokaEnabled();                                                                          //ett par metoder som kollar om programmet ska aktivera en knapp "boka"
         }
 
         private void TableComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -168,7 +168,7 @@ namespace Labb3_WPF_app
             }
         }
         /// <summary>
-        ///Jag skapade savetoFile metoden för att skapa fil med  eget namn(Jag tänkte att testing av programmet blir lättare med detta). Annars metoden updateListToFile hanterar list uppdateringar i filen: log(dagens datum)
+        ///Jag skapade savetoFile metoden för att skapa fil med eget namn(Jag tänkte att testing av programmet blir lättare med detta). Annars metoden updateListToFile hanterar list uppdateringar i filen: log(dagens datum)
         /// </summary>       
         private async void SaveToFile_Click(object sender, RoutedEventArgs e)
         {

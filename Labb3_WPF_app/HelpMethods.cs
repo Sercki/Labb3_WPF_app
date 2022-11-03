@@ -10,12 +10,12 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
-namespace Labb3_WPF_app                         //Jag tänkte skapa alla metoderna som extension metods:
+namespace Labb3_WPF_app                         //Jag tänkte skapa ett antal av extension metods:
 {
     internal static class HelpMethods
     {
         /// <summary>
-        /// en metod som lägger en nyskapad bokning till en lista av bokningar OM  det finns tillräcklig mycket lediga platser vid ett bord
+        /// en metod som lägger en nyskapad bokning till en lista av bokningar OM det finns tillräcklig mycket lediga platser vid ett bord
         /// </summary>
         /// <param name="isMessageBoxNeeded">Finns det behöv att visa en messageBox till användaren? true eller false? </param>
         /// <param name="inData">Lista av alla bokningar</param>

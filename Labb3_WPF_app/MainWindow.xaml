@@ -30,7 +30,7 @@
                                 <StackPanel>
                                     <TextBlock TextWrapping="Wrap">
                                         <TextBlock.Text>
-                                            <MultiBinding StringFormat = "{}{0}, {1}, bord nr {2}, {4} seats, {3}">
+                                            <MultiBinding StringFormat = "{}{0}, {1}, bord nr {2}, {4} platser, {3}">
                                                 <Binding Path = "Date"/>
                                                 <Binding Path = "Time"/>
                                                 <Binding Path = "TableNumber"/>
